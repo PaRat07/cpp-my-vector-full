@@ -2,8 +2,8 @@
 
 template<class T>
 void Destroy(T *from, T *to) {
-    std::for_each(from, to, [](T *val) {
-        val->~T();
+    std::for_each(from, to, [](T &val) {
+        (&val)->~T();
     });
 }
 
@@ -14,8 +14,8 @@ void DestroyN(T *from, size_t n) {
 
 template<class T>
 void Construct(T *from, T *to) {
-    std::for_each(from, to, [](T *val) {
-        val->T();
+    std::for_each(from, to, [](T &val) {
+        new (&val) T();
     });
 }
 
@@ -259,7 +259,8 @@ public:
 
     void reserve(size_t new_capacity) {
         if (new_capacity > max_size()) {
-            throw std::length_error("new_capacity in " + __PRETTY_FUNCTION__ + "is bigger then max_size()");
+            using namespace std::string_literals;
+            throw std::length_error("new_capacity in "s + __PRETTY_FUNCTION__ + "is bigger then max_size()"s);
         }
         if (new_capacity > capacity_) {
             T *new_data = allocator_.allocate(new_capacity);
